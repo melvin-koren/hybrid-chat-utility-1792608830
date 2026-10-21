@@ -1,29 +1,23 @@
 name: Кроссплатформенная сборка
-
 on: [push]
-
 jobs:
   build-desktop:
     name: Сборка под ${{ matrix.target-os }}
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
           - target-os: Linux
-            os: ubuntu-24.04
             target: x86_64-unknown-linux-gnu
             cmd: cargo build --release
             out-path: target/release/covert_messenger
-
           - target-os: Windows
-            os: ubuntu-24.04
             target: x86_64-pc-windows-gnu
             cmd: |
               sudo apt-get update && sudo apt-get install -y mingw-w64
               rustup target add x86_64-pc-windows-gnu
               cargo build --release --target x86_64-pc-windows-gnu
             out-path: target/x86_64-pc-windows-gnu/release/covert_messenger.exe
-
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -41,13 +35,11 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-linux-android
-      - name: Настройка Android SDK 34
+      - name: Сборка APK
         run: |
-          echo "y" | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses || echo "OK"
-          ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0"
           cargo install cargo-apk
           cargo apk build --release
       - uses: actions/upload-artifact@v4
         with:
           name: app_Android
-          path: target/debug/apk/*.apk
+          path: target/release/apk/*.apk

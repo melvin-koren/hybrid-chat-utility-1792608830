@@ -12,10 +12,5 @@ serde_json = "1.0"
 
 [package.metadata.android]
 build_targets = ["aarch64-linux-android"]
-# Указываем современную версию SDK 34, которая гарантированно предустановлена на серверах GitHub
-sdk_targets = [34]
-
-[package.metadata.android]
-build_targets = ["aarch64-linux-android"]
 target_sdk_version = 34
 min_sdk_version = 21
